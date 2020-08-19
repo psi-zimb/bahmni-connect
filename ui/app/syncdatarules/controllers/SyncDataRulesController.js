@@ -168,7 +168,7 @@ angular.module('syncdatarules')
            // var promises = marker.filters.map(function (filter) {
              // var syncedInfo = offlineService.getItem("synced") || {};
             //  var synced = syncedInfo[dbName] || [];
-              return $http.get(Bahmni.Common.Constants.preprocessedPatientFilesUrl + "offline-concepts").then(function (response) {
+              return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsFilesUrl + "offline-concepts").then(function (response) {
                 return getPatientDataForFiles(getRemainingFileNames(response.data, []), 0, null, dbName).then(function (uuid) {
                   eventLogUuid = uuid;
                 });
@@ -192,10 +192,10 @@ angular.module('syncdatarules')
 
       var getPatientDataForFiles = function (fileNames, count, eventLogUuid, dbName) {
         if (count !== fileNames.length) {
-          return $http.get(Bahmni.Common.Constants.preprocessedPatientUrl + fileNames[count]).then(function (response) {
-            updatePendingEventsCount("offline-concepts", response.data.offline-concepts.length);
+          return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + fileNames[count]).then(function (response) {
+            updatePendingEventsCount("offline-concepts", response.data.offlineconcepts.length);
             var lastReadEventUuid = response.data.lastReadEventUuid;
-            return savePatients(response.data.patients, 0).then(function () {
+            return savePatients(response.data.offlineconcepts, 0).then(function () {
               updateSyncedFileNames(fileNames[count], dbName);
               return getPatientDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
             });
