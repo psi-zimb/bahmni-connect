@@ -136,13 +136,15 @@ module.exports = function (grunt) {
                     "dist/offline/index.html": "dist/offline/index.html",
                     "dist/registration/index.html": "dist/registration/index.html",
                     "dist/clinical/index.html": "dist/clinical/index.html",
-                    "dist/home/index.html": "dist/home/index.html"
+                    "dist/home/index.html": "dist/home/index.html",
+                    "dist/syncdatarules/index.html": "dist/syncdatarules/index.html"
+
                 }
             }
         },
         eslint: {
             options: {
-                fix: false,
+                fix: grunt.option('fix'),
                 quiet: true
             },
             target: [
@@ -219,7 +221,9 @@ module.exports = function (grunt) {
                 '<%= yeoman.app %>/**/*.html',
                 '<%= yeoman.app %>/common/**/*.html',
                 '<%= yeoman.app %>/home/**/*.html',
-                '<%= yeoman.app %>/registration/**/*.html'
+                '<%= yeoman.app %>/registration/**/*.html',
+                '<%= yeoman.app %>/syncdatarules/**/*.html'
+
             ],
             css: '<%= yeoman.app %>/styles/**/*.css',
             options: {
@@ -286,7 +290,8 @@ module.exports = function (grunt) {
                             'common/**/*.html',
                             'home/**/*.html',
                             'offline/**/*.html',
-                            'registration/**/*.html'
+                            'registration/**/*.html',
+                            'syncdatarules/**/*.html'
                         ],
                         dest: '<%= yeoman.dist %>'
                     }
@@ -393,6 +398,12 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: '<%= yeoman.dist %>',
+                        src: ['syncdatarules.*.js'],
+                        dest: '<%= yeoman.dist %>/syncdatarules/'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= yeoman.dist %>',
                         src: ['clinical.*.css'],
                         dest: '<%= yeoman.dist %>/clinical/'
                     },
@@ -413,6 +424,12 @@ module.exports = function (grunt) {
                         cwd: '<%= yeoman.dist %>',
                         src: ['registration.*.css'],
                         dest: '<%= yeoman.dist %>/registration/'
+                    },
+                    {
+                        expand: true,
+                        cwd: '<%= yeoman.dist %>',
+                        src: ['syncdatarules.*.css'],
+                        dest: '<%= yeoman.dist %>/syncdatarules/'
                     }
                 ]
             }
@@ -457,7 +474,8 @@ module.exports = function (grunt) {
                 files: {
                     '<%= yeoman.dist %>/registration.min.js': '<%= yeoman.dist %>/registration.min.js',
                     '<%= yeoman.dist %>/home.min.js': '<%= yeoman.dist %>/home.min.js',
-                    '<%= yeoman.dist %>/clinical.min.js': '<%= yeoman.dist %>/clinical.min.js'
+                    '<%= yeoman.dist %>/clinical.min.js': '<%= yeoman.dist %>/clinical.min.js',
+                    '<%= yeoman.dist %>/syncdatarules.min.js': '<%= yeoman.dist %>/syncdatarules.min.js'
                 }
             },
             chrome: {
@@ -481,13 +499,10 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.renameTask('regarde', 'watch');
-
     grunt.registerTask('test', ['eslint', 'karma:chrome', 'coverage', 'karma:android', 'coverage']);
 
     grunt.registerTask('bundle', [
-        'npm-install',
-        'bower-install',
+        'yarn-install',
         'eslint',
         'copy:nodeModules',
         'clean:dist',
@@ -519,28 +534,19 @@ module.exports = function (grunt) {
     grunt.registerTask('chrome', ['bundle', 'karma:chrome', 'coverage', 'uglify-and-rename', 'preprocess:chrome']);
     grunt.registerTask('android', ['bundle', 'karma:android', 'coverage', 'uglify-and-rename', 'preprocess:android', 'toggleComments']);
 
-    grunt.registerTask('bower-install', 'install dependencies using bower', function () {
-        var exec = require('child_process').exec;
-        var cb = this.async();
-        exec('bower install', function (err, stdout) {
-            console.log(stdout);
-            cb(!err);
-        });
-    });
-
     grunt.registerTask('generate-sw', 'generate service worker file', function () {
         var exec = require('child_process').exec;
         var cb = this.async();
-        exec('npm run sw', function (err, stdout) {
+        exec('yarn sw', function (err, stdout) {
             console.log(stdout);
             cb(!err);
         });
     });
 
-    grunt.registerTask('npm-install', 'install dependencies using npm', function () {
+    grunt.registerTask('yarn-install', 'install dependencies using yarn', function () {
         var exec = require('child_process').exec;
         var cb = this.async();
-        exec('npm install', function (err, stdout) {
+        exec('yarn install', function (err, stdout) {
             console.log(stdout);
             cb(!err);
         });
